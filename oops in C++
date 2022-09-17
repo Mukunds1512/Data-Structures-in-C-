@@ -1,0 +1,174 @@
+#include <iostream>
+using std::string;
+
+//This is an abstarct class which should have at least on virtual function
+//This virtual function has to be defined in a derived class in this case class Employee
+class AbstractEmployee {
+    virtual void AskForPromotion()=0;
+};
+
+//Everything in a class are private by default.
+class Employee: AbstractEmployee {
+private:
+    //Attributes or members
+    string Company;
+    int Age;
+
+protected:
+    string Name;
+
+public:
+
+    void setName (string name) { //setter function
+        Name = name;
+    }
+    string getName() { //getter function
+        return Name;
+    }
+
+    void setCompany (string company) {
+        Company = company;
+    }
+    string getCompany() {
+        return Company;
+    }
+
+    void setAge (int age) {
+        Age = age;
+    }
+    int getAge() {
+        return Age;
+    }
+
+    void introduceYourself() {   //Class method or function
+        std::cout <<"Name - "<<Name<<std::endl;
+        std::cout <<"Company - "<<Company<<std::endl;
+        std::cout <<"Age - "<<Age<<std::endl;
+    }
+
+    void AskForPromotion(){//Here we have defined the virtual function in the derived class
+        if(Age>30)
+            std::cout<<Name<<" got promoted!"<<std::endl;
+        else
+            std::cout<<Name<<", sorry No promotion for ya!" << std::endl;
+    }
+
+    //The virtual keyword makes the compiler check if there is a definition of a function
+    //with the same name in the derived classes and if yes they are run and not this. (Overridden)
+    //If there is no definition then run the function of the parent class.
+    virtual void Work(){
+        std::cout<<Name<<" is checking email, task backlog, performing tasks..."<<std::endl;
+    }
+
+    //Contructors allow us to make the code efficient. Should be the same name as the class
+    Employee(string name, string company, int age) {  //Make a constructor with the following arguments
+        Name = name;
+        Company = company;
+        Age = age;
+    }
+};
+
+//A child class (sub class) derived from the base class (Super class) Employee
+//The child class has all the attributes and functions of the base class
+//and can have its own attributes and functions.
+//We make it "public" Employee so that we can call the public functions and attributes of the class
+//Employee using the object of class Developer in the main function.
+class Developer: public Employee {
+public:
+    string FavProgrammingLanguage;
+
+    //Constructor for Developer class with the attributes for both the classes (Child and Base)
+    //By writing :Employee(name, company, age) we are specifying that we are using the definition
+    //of the constructor in class Employee for the attributes in class Employee.
+    //The definition of the attribute in class Developer which is FavProgrammingLanguage is defined below
+    Developer(string name, string company, int age, string favProgrammingLanguage)
+        :Employee(name, company, age)
+    {
+        FavProgrammingLanguage = favProgrammingLanguage;
+    }
+
+    void FixBug(){
+        //We can use getName() instead of Name
+        std::cout<< Name <<" fixed bug using " << FavProgrammingLanguage << std::endl;
+
+    }
+
+    void Work(){
+        std::cout<<Name<<" is writing "<< FavProgrammingLanguage << " code" <<std::endl;
+    }
+
+};
+
+//Another class called Teacher.
+class Teacher: public Employee {
+public:
+    string Subject;
+
+    void PrepareLesson() {
+        std::cout << Name << " is preparing " << Subject << " lesson" <<std::endl;
+    }
+
+    void Work(){
+        std::cout<< Name <<" is teaching "<< Subject <<std::endl;
+    }
+
+    Teacher(string name, string company, int age, string subject)
+        :Employee(name, company, age)
+    {
+        Subject = subject;
+    }
+};
+
+int main()
+{
+    //There is always a default constructor when an instance is declared.
+    //Whenever there is an instance and we make a constructor we lose the default constructor for that instance.
+    //This required us to use the constructor and put appropriate arguments when an instance is declared or
+    //make our own default constructor.
+    //Employee employee1 = Employee("Saldina", "yt-Mukund", 19); //Instance or object of class
+    //employee1.Name = "Saldina";
+    //employee1.Company = "yt-Mukund";
+    //employee1.Age = 19;
+    //employee1.introduceYourself();
+
+    //Employee employee2 = Employee("John", "Amazon", 35); //Instance or object of class
+    //employee2.Name = "John";
+    //employee2.Company = "Amazon";
+    //employee2.Age = 35;
+    //employee2.introduceYourself();
+
+    //This is the code to use setters and getters after making the variables private
+    //employee1.setAge(39);
+    //std::cout <<employee1.getName()<<" is "<< employee1.getAge()<<" years old"<<std::endl;
+
+    //Here we call the AskForPromotion function in the main by using instances from the
+    //Employee class.
+    //employee1.AskForPromotion();
+    //employee2.AskForPromotion();
+
+    //An object of class Developer d can only be initialised after making a constructor
+    //Cause the class Developer has lost its default constructor when it was derived from
+    //class Employee which has its own class.
+    Developer d = Developer("Saldina", "YT-CodeBeauty", 25, "c++");
+    //d.FixBug();
+    //d.AskForPromotion();
+
+    Teacher t = Teacher("Jack", "Cool School", 35, "History");
+    //t.PrepareLesson();
+    //t.AskForPromotion();
+
+    //This is because the object of class developer and teacher give more preference
+    //to the method of their class then the method of their base class which is Employee
+    //d.Work(); Prints "Saldina is writing c++ code"
+    //t.Work(); Prints "Jack is teaching History"
+
+    //The most common use of polymorphism is when a parent class reference is used
+    //to refer to a child class object.
+
+    //A pointer to base class can hold reference to a derived class.
+    Employee* e1 = &d;
+    Employee* e2 = &t;
+
+    //"->" used to call the method work() by using pointer
+    e1->Work();
+    e2->Work();
